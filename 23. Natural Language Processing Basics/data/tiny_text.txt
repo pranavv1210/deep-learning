@@ -1,0 +1,3 @@
+deep learning is useful
+text models learn from tokens
+padding makes batches equal length

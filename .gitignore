@@ -1,0 +1,14 @@
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.joblib
+*.pkl
+*.h5
+*.keras
+*.pt
+*.pth
+logs/
+runs/
