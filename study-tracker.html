@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Learning Study Tracker</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d9dee8;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --done: #16a34a;
+      --warn: #f59e0b;
+      --shadow: 0 12px 30px rgba(20, 31, 54, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 44px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 760px;
+      font-size: 16px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 10px 12px;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(20, 31, 54, 0.04);
+    }
+
+    .button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .button:hover {
+      border-color: var(--accent);
+    }
+
+    .button.primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 750;
+    }
+
+    .progress-shell {
+      height: 10px;
+      background: #e8edf6;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--done));
+      transition: width 180ms ease;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 180px 180px;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .field {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 11px 12px;
+    }
+
+    .section {
+      margin-top: 22px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .section-meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .lesson {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      box-shadow: 0 6px 18px rgba(20, 31, 54, 0.05);
+    }
+
+    .lesson.done {
+      border-color: rgba(22, 163, 74, 0.35);
+      background: #f2fbf5;
+    }
+
+    .check {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #aab4c3;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: #fff;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .lesson.done .check {
+      background: var(--done);
+      border-color: var(--done);
+    }
+
+    .lesson-title {
+      font-weight: 720;
+      margin: 0;
+    }
+
+    .lesson-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 2px 0 0;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: #edf2ff;
+      color: #2947a9;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .project .pill {
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 26px;
+      text-align: center;
+      color: var(--muted);
+      background: var(--panel);
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 820px) {
+      .topbar,
+      .toolbar,
+      .grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .lesson {
+        grid-template-columns: auto 1fr;
+      }
+
+      .pill {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>Deep Learning Study Tracker</h1>
+        <p class="subtitle">Click a topic when you finish the notebook. Your progress is saved in this browser automatically.</p>
+      </div>
+      <div class="actions">
+        <button class="button" id="exportBtn" type="button">Export</button>
+        <button class="button" id="resetBtn" type="button">Reset</button>
+        <button class="button primary" id="markVisibleBtn" type="button">Mark Visible Done</button>
+      </div>
+    </header>
+
+    <section class="stats" aria-label="Progress summary">
+      <div class="stat">
+        <div class="stat-label">Overall Progress</div>
+        <div class="stat-value" id="overallPercent">0%</div>
+        <div class="progress-shell"><div class="progress-bar" id="overallBar"></div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Topics Done</div>
+        <div class="stat-value" id="topicCount">0 / 33</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Projects Done</div>
+        <div class="stat-value" id="projectCount">0 / 10</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Next Lesson</div>
+        <div class="stat-value" id="nextLesson" style="font-size: 18px;">Start</div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Filters">
+      <input class="field" id="searchInput" type="search" placeholder="Search topics or projects">
+      <select class="field" id="typeFilter">
+        <option value="all">All items</option>
+        <option value="topic">Topics only</option>
+        <option value="project">Projects only</option>
+      </select>
+      <select class="field" id="statusFilter">
+        <option value="all">All statuses</option>
+        <option value="todo">To do</option>
+        <option value="done">Done</option>
+      </select>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Learning Path</h2>
+        <div class="section-meta" id="topicMeta">0 of 33 complete</div>
+      </div>
+      <div class="grid" id="topicsGrid"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">End-To-End Projects</h2>
+        <div class="section-meta" id="projectMeta">0 of 10 complete</div>
+      </div>
+      <div class="grid" id="projectsGrid"></div>
+    </section>
+
+    <div class="empty-state" id="emptyState">No matching lessons found.</div>
+  </main>
+
+  <script>
+    const storageKey = "deep-learning-study-tracker-v1";
+
+    const topics = [
+      "Python For Deep Learning",
+      "NumPy",
+      "Pandas",
+      "Matplotlib And Seaborn",
+      "Tensor Basics",
+      "Neural Network Fundamentals",
+      "Perceptron",
+      "Activation Functions",
+      "Loss Functions",
+      "Optimizers",
+      "Backpropagation",
+      "Gradient Descent",
+      "Artificial Neural Networks",
+      "TensorFlow Basics",
+      "Keras Basics",
+      "PyTorch Basics",
+      "Image Data Preprocessing",
+      "Convolutional Neural Networks",
+      "Transfer Learning",
+      "Data Augmentation",
+      "Recurrent Neural Networks",
+      "LSTM And GRU",
+      "Natural Language Processing Basics",
+      "Word Embeddings",
+      "Transformers Basics",
+      "Autoencoders",
+      "Generative Adversarial Networks",
+      "Model Evaluation",
+      "Regularization And Dropout",
+      "Hyperparameter Tuning",
+      "Model Saving And Loading",
+      "Deployment Basics",
+      "End-To-End Deep Learning Projects"
+    ];
+
+    const projects = [
+      "Image Classification",
+      "Object Detection",
+      "Sentiment Analysis",
+      "Text Classification",
+      "Face Mask Detection",
+      "Handwritten Digit Recognition",
+      "Chatbot",
+      "Time Series Forecasting",
+      "Medical Image Classification",
+      "Recommendation System"
+    ];
+
+    const notes = {
+      topic: "Open the notebook, run it, read the explanations, complete exercises.",
+      project: "Run the full pipeline, inspect predictions, write one next step."
+    };
+
+    const state = loadState();
+    const topicsGrid = document.querySelector("#topicsGrid");
+    const projectsGrid = document.querySelector("#projectsGrid");
+    const searchInput = document.querySelector("#searchInput");
+    const typeFilter = document.querySelector("#typeFilter");
+    const statusFilter = document.querySelector("#statusFilter");
+
+    function loadState() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function itemId(type, index) {
+      return `${type}-${String(index + 1).padStart(2, "0")}`;
+    }
+
+    function renderList(container, list, type) {
+      container.innerHTML = "";
+      list.forEach((title, index) => {
+        const id = itemId(type, index);
+        const number = String(index + 1).padStart(2, "0");
+        const lesson = document.createElement("article");
+        lesson.className = `lesson ${type}`;
+        lesson.dataset.id = id;
+        lesson.dataset.type = type;
+        lesson.dataset.title = title.toLowerCase();
+        lesson.innerHTML = `
+          <button class="check" type="button" aria-label="Toggle ${title}">${state[id] ? "✓" : ""}</button>
+          <div>
+            <p class="lesson-title">${number}. ${title}</p>
+            <p class="lesson-note">${notes[type]}</p>
+          </div>
+          <span class="pill">${type === "topic" ? "Topic" : "Project"}</span>
+        `;
+        lesson.querySelector(".check").addEventListener("click", () => toggleItem(id));
+        lesson.addEventListener("dblclick", () => toggleItem(id));
+        container.appendChild(lesson);
+      });
+    }
+
+    function toggleItem(id) {
+      state[id] = !state[id];
+      saveState();
+      applyFilters();
+      updateStats();
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.trim().toLowerCase();
+      const type = typeFilter.value;
+      const status = statusFilter.value;
+      let visibleCount = 0;
+
+      document.querySelectorAll(".lesson").forEach((lesson) => {
+        const id = lesson.dataset.id;
+        const isDone = Boolean(state[id]);
+        const matchesSearch = lesson.dataset.title.includes(query);
+        const matchesType = type === "all" || lesson.dataset.type === type;
+        const matchesStatus = status === "all" || (status === "done" && isDone) || (status === "todo" && !isDone);
+        const shouldShow = matchesSearch && matchesType && matchesStatus;
+
+        lesson.classList.toggle("done", isDone);
+        lesson.querySelector(".check").textContent = isDone ? "✓" : "";
+        lesson.classList.toggle("hidden", !shouldShow);
+        if (shouldShow) visibleCount += 1;
+      });
+
+      document.querySelector("#emptyState").style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    function countDone(prefix, total) {
+      let done = 0;
+      for (let index = 0; index < total; index += 1) {
+        if (state[itemId(prefix, index)]) done += 1;
+      }
+      return done;
+    }
+
+    function updateStats() {
+      const topicsDone = countDone("topic", topics.length);
+      const projectsDone = countDone("project", projects.length);
+      const total = topics.length + projects.length;
+      const done = topicsDone + projectsDone;
+      const percent = Math.round((done / total) * 100);
+      const nextTopic = topics.find((_, index) => !state[itemId("topic", index)]);
+      const nextProject = projects.find((_, index) => !state[itemId("project", index)]);
+
+      document.querySelector("#overallPercent").textContent = `${percent}%`;
+      document.querySelector("#overallBar").style.width = `${percent}%`;
+      document.querySelector("#topicCount").textContent = `${topicsDone} / ${topics.length}`;
+      document.querySelector("#projectCount").textContent = `${projectsDone} / ${projects.length}`;
+      document.querySelector("#topicMeta").textContent = `${topicsDone} of ${topics.length} complete`;
+      document.querySelector("#projectMeta").textContent = `${projectsDone} of ${projects.length} complete`;
+      document.querySelector("#nextLesson").textContent = nextTopic || nextProject || "Complete";
+    }
+
+    function markVisibleDone() {
+      document.querySelectorAll(".lesson:not(.hidden)").forEach((lesson) => {
+        state[lesson.dataset.id] = true;
+      });
+      saveState();
+      applyFilters();
+      updateStats();
+    }
+
+    function resetProgress() {
+      if (!confirm("Reset all saved progress for this tracker?")) return;
+      Object.keys(state).forEach((key) => delete state[key]);
+      saveState();
+      applyFilters();
+      updateStats();
+    }
+
+    function exportProgress() {
+      const doneItems = [];
+      topics.forEach((title, index) => {
+        if (state[itemId("topic", index)]) doneItems.push(`Topic: ${String(index + 1).padStart(2, "0")}. ${title}`);
+      });
+      projects.forEach((title, index) => {
+        if (state[itemId("project", index)]) doneItems.push(`Project: ${String(index + 1).padStart(2, "0")}. ${title}`);
+      });
+      const text = doneItems.length ? doneItems.join("\\n") : "No completed items yet.";
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Progress copied to clipboard.");
+      }).catch(() => {
+        alert(text);
+      });
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+    typeFilter.addEventListener("change", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+    document.querySelector("#markVisibleBtn").addEventListener("click", markVisibleDone);
+    document.querySelector("#resetBtn").addEventListener("click", resetProgress);
+    document.querySelector("#exportBtn").addEventListener("click", exportProgress);
+
+    renderList(topicsGrid, topics, "topic");
+    renderList(projectsGrid, projects, "project");
+    applyFilters();
+    updateStats();
+  </script>
+</body>
+</html>
